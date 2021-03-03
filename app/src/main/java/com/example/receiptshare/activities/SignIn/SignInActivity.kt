@@ -36,23 +36,12 @@ class SignInActivity : AppCompatActivity() {
             .requestIdToken(getString(R.string.default_web_client_id))
             .requestEmail()
             .build()
-        mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
+        mGoogleSignInClient = GoogleSignIn.getClient(this, gso)
 
         mLoginButton = findViewById<SignInButton>(R.id.signin_login_btn)
         mLoginButton.setSize(SignInButton.SIZE_WIDE)
 
-
-
         mLoginButton.setOnClickListener{ signIn() }
-
-
-        /* TODO: Add new users to a database roster. Users should be able to select each other from a drop down menu
-            Make a folder with the format UID1_UID2, so two users can share the same folder
-            Change the UI to be just one page; the FirebaseRecycler view, a '+' button, and a 'Add friend by email' button
-            Adding multiple users to same folder: https://stackoverflow.com/questions/48746636/firebase-storage-limit-access-to-two-users
-            Creating a friends list: https://stackoverflow.com/questions/36023038/how-to-create-a-friends-list-using-firebase/36046266
-            Perhaps just make the list one where someone starts typing in letters for a name, and it shows up.
-         */
     }
 
     private fun signIn() {
@@ -76,7 +65,6 @@ class SignInActivity : AppCompatActivity() {
                 } catch (e: ApiException) {
                     // Google Sign In failed, update UI appropriately
                     Log.w("SignInActivity", "Google sign in failed", e)
-                    // ...
                 }
             } else {
                 Log.w("SignInActivity", exception.toString())
@@ -91,8 +79,8 @@ class SignInActivity : AppCompatActivity() {
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
                     Log.d("SignInActivity", "signInWithCredential:success")
-                    val intent = Intent(this, MainActivity::class.java)
-                    startActivity(intent)
+                    val mainActivity = Intent(this, MainActivity::class.java)
+                    startActivity(mainActivity)
                 } else {
                     // If sign in fails, display a message to the user.
                     Log.w("SignInActivity", "signInWithCredential:failure", task.exception)

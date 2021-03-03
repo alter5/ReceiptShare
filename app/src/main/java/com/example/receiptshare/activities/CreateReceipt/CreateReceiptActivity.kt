@@ -11,14 +11,14 @@ import com.example.receiptshare.R
 import com.example.receiptshare.activities.Main.MainActivity
 import com.example.receiptshare.data.PaymentStatus
 import com.example.receiptshare.data.Receipt
-import com.example.receiptshare.helpers.findFloat
+import com.example.receiptshare.helpers.findFloats
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.database.FirebaseDatabase
-import com.google.firebase.ktx.Firebase
 import com.google.firebase.storage.FirebaseStorage
 import com.google.mlkit.vision.common.InputImage
 import com.google.mlkit.vision.text.TextRecognition
 import java.io.IOException
+import java.lang.String.format
 import java.util.*
 
 class CreateReceiptActivity : AppCompatActivity() {
@@ -35,6 +35,7 @@ class CreateReceiptActivity : AppCompatActivity() {
     private lateinit var mRecipientET: EditText
     private lateinit var mTotalEt: EditText
     private lateinit var mOwesET: EditText
+    private lateinit var mSubmitBtn: Button
 
     private lateinit var mReceiptImageUri: Uri
     private var mReceiptTotal: Double = 0.0
@@ -48,6 +49,10 @@ class CreateReceiptActivity : AppCompatActivity() {
 
         mReceiptImageUri = intent.extras?.getParcelable<Uri>(MainActivity.RECEIPT_IMAGE_URI_EXTRA)!!
 
+        bindViews()
+    }
+
+    private fun bindViews(){
         mReceiptImageIV = findViewById(R.id.createreceipt_receipt_image_iv)
         mTitleET = findViewById(R.id.createreceipt_title_et)
         mRecipientET = findViewById(R.id.createreceipt_recipient_et)
@@ -56,16 +61,13 @@ class CreateReceiptActivity : AppCompatActivity() {
 
         mReceiptImageIV.setImageURI(mReceiptImageUri)
         mTotalEt.setText(String.format("%.2f", mReceiptTotal))
-
         getTotalFromReceiptImage(mReceiptImageUri)
 
-
-        val submitButton: Button = findViewById(R.id.createreceipt_submit_btn)
-        submitButton.setOnClickListener {
+        mSubmitBtn = findViewById(R.id.createreceipt_submit_btn)
+        mSubmitBtn.setOnClickListener {
             uploadReceipt()
             finish()
         }
-
     }
 
     private fun uploadReceipt() {
@@ -93,7 +95,7 @@ class CreateReceiptActivity : AppCompatActivity() {
         }
     }
 
-    fun getTotalFromReceiptImage(imageUri: Uri){
+    private fun getTotalFromReceiptImage(imageUri: Uri){
         val recognizer = TextRecognition.getClient()
         var image: InputImage? = null
         try {
@@ -105,26 +107,26 @@ class CreateReceiptActivity : AppCompatActivity() {
         var text = ""
         recognizer.process(image).addOnSuccessListener {
             for (block in it.textBlocks) text += block.text + "\n"
-            val totalS = getTotal(text)
-            Log.d(TAG + ":getTotalFromReceiptImage", "$totalS")
-            mTotalEt.setText(totalS)
+            val receiptTotal = createReceiptFromText(text).receiptTotal
+            val s = "%.2f".format(receiptTotal)
+            mTotalEt.setText(s)
         }
     }
 
-    fun getTotal(text: String): String {
-        // TODO: Implement the code that's commented out
-        val originalResult = text.findFloat()
-        // if (originalResult.isEmpty()) return Receipt() else { do the rest of the code below
-        // val receipt = Receipt()
-        val totalF = Collections.max(originalResult)
-        // Add tax variable to Receipt class
-        // val secondLargestF = findSecondLargestFloat(originalResult)
-        val total = totalF.toString()
-        // receipt.tax = if (secondLargestF == 0.0f) "0" else "%.2f".format(totalF - secondLargestF)
-        // Extract title from receipt photo
-        // receipt.title = text.firstLine()
-        // return receipt
-        return total
+    private fun createReceiptFromText(text:String): Receipt {
+        // Finds all floats in the receipt
+        val receiptFloats = text.findFloats()
+
+        val receipt = Receipt()
+        if (receiptFloats.isEmpty()) return receipt
+        else {
+            receipt.receiptTotal = (receiptFloats.maxOrNull() ?: 0.0f).toDouble()
+            // TODO: Add tax to Receipt class
+            // receipt.receiptTax = receiptFloats.findSecondLargest() ?: 0.0f
+            // receipt.title = text.firstLine()
+
+            return receipt
+        }
     }
 }
 

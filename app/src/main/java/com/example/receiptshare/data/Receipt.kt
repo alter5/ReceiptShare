@@ -10,7 +10,7 @@ data class Receipt(
     val receiptTitle: String = "",
     val receiptCreator: String = "",
     val receiptRecipient: String = "",
-    val receiptTotal: Double = 0.0,
+    var receiptTotal: Double = 0.0,
     val recipientOwes: Double = 0.0,
     var paymentStatus: PaymentStatus = PaymentStatus.UNPAID,
     var receiptPhotoUUID: String = "",

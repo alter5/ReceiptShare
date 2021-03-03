@@ -1,7 +1,7 @@
 package com.example.receiptshare.helpers
 
 
-fun String.findFloat(): ArrayList<Float> {
+fun String.findFloats(): ArrayList<Float> {
     //get digits from result
     if (this.isEmpty()) return ArrayList<Float>()
     val originalResult = ArrayList<Float>()

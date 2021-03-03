@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
                 )
             }
 
-            protected override fun onBindViewHolder(
+            override fun onBindViewHolder(
                 holder: ReceiptHolder,
                 position: Int,
                 model: Receipt
