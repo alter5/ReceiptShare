@@ -86,7 +86,6 @@ class MainActivity : AppCompatActivity() {
                 holder.bind(model)
                 holder.itemView.setOnClickListener {
                     val key = getRef(itemCount - 1 - position).key
-                    // TODO: Check if context is correct
                     val viewReceipt = Intent(this@MainActivity, ViewReceiptActivity::class.java)
                     viewReceipt.putExtra(RECEIPT_KEY, key)
                     startActivity(viewReceipt)
@@ -94,7 +93,7 @@ class MainActivity : AppCompatActivity() {
             }
 
             override fun getItem(position: Int): Receipt {
-                // Sort Firebase query by ascending order
+                // Sort Firebase query by descending order
                 return super.getItem(itemCount - 1 - position)
             }
         }
