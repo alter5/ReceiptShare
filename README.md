@@ -1,3 +1,6 @@
-ReceiptShare allows users to share receipts and split bills with each other
+ReceiptShare is an app allowing users to share receipts and split bills with each other
 
-A readme for this will be coming soon!
+Tech Stack:
+  - Android for the mobile application
+  - Google Firebase and Storage for storing receipts and profile information
+
